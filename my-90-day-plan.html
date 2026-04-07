@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="My 90 Days">
+<meta name="theme-color" content="#0c0c0f">
+<title>My 90-Day Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0c0f;
+    --surface: #131318;
+    --card: #18181f;
+    --border: #252530;
+    --gold: #e8b84b;
+    --gold-dim: #a07a28;
+    --teal: #2ec4a9;
+    --rose: #e0546a;
+    --lavender: #a08de8;
+    --text: #e4e4f0;
+    --muted: #6a6a88;
+    --white: #ffffff;
+    --safe-top: env(safe-area-inset-top);
+    --safe-bottom: env(safe-area-inset-bottom);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; overflow: hidden; background: var(--bg); }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+  }
+
+  /* ── HEADER ── */
+  .app-header {
+    padding: calc(var(--safe-top) + 14px) 20px 12px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    position: relative;
+  }
+  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+  .app-eyebrow { font-size: 10px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; }
+  .app-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; color: var(--white); line-height: 1.1; }
+  .app-title em { color: var(--gold); font-style: italic; }
+  .day-badge {
+    background: var(--gold);
+    color: #000;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 100px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar-wrap { padding: 10px 20px 0; flex-shrink: 0; }
+  .progress-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--rose), var(--gold), var(--teal)); border-radius: 2px; transition: width 0.4s ease; }
+  .progress-labels { display: flex; justify-content: space-between; margin-top: 5px; }
+  .progress-label { font-size: 9px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
+
+  /* ── NAV TABS ── */
+  .nav-tabs {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px 16px 0;
+    gap: 4px;
+    flex-shrink: 0;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-tab {
+    padding: 7px 14px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    background: transparent;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .nav-tab.active { background: var(--gold); color: #000; border-color: var(--gold); font-weight: 700; }
+
+  /* ── SCROLL CONTENT ── */
+  .scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding: 16px 16px calc(var(--safe-bottom) + 20px);
+  }
+
+  /* ── CARDS ── */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+  .card-header { padding: 16px 18px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .card-body { padding: 0 18px 18px; }
+  .chevron { color: var(--muted); font-size: 18px; transition: transform 0.2s; flex-shrink: 0; }
+  .chevron.open { transform: rotate(90deg); }
+
+  /* ── WEEK NUMBER ── */
+  .week-num { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 900; opacity: 0.45; flex-shrink: 0; }
+  .week-meta { flex: 1; }
+  .week-phase { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+  .week-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--white); line-height: 1.2; }
+
+  /* ── SECTION LABEL ── */
+  .section-label { font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); margin: 16px 0 8px; }
+
+  /* ── OBJECTIVE BOX ── */
+  .obj-box { padding: 12px 14px; border-radius: 10px; border-left: 3px solid; margin-bottom: 4px; }
+  .obj-box p { font-size: 13px; line-height: 1.65; }
+
+  /* ── TASKS ── */
+  .task-item { border-bottom: 1px solid var(--border); }
+  .task-item:last-child { border-bottom: none; }
+  .task-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; cursor: pointer; }
+  .task-num { width: 22px; height: 22px; border-radius: 50%; border: 2px solid; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .task-info { flex: 1; }
+  .task-name { font-size: 13px; color: var(--text); line-height: 1.4; }
+  .task-time { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .task-detail { font-size: 12px; color: var(--muted); line-height: 1.65; background: var(--surface); padding: 12px; border-radius: 8px; margin: 0 0 12px 34px; }
+
+  /* ── REFLECTION ── */
+  .reflection-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
+  .reflection-diamond { color: var(--gold); flex-shrink: 0; font-size: 10px; margin-top: 3px; }
+  .reflection-text { font-size: 13px; color: var(--muted); font-style: italic; line-height: 1.6; }
+
+  /* ── DELIVERABLE ── */
+  .deliverable { background: rgba(232,184,75,0.1); border: 1px solid rgba(232,184,75,0.3); border-radius: 10px; padding: 14px; margin-top: 4px; }
+  .deliverable-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+  .deliverable-text { font-size: 12px; color: var(--text); line-height: 1.6; }
+
+  /* ── OVERVIEW CARDS ── */
+  .phase-card { border-radius: 14px; padding: 18px; margin-bottom: 10px; border: 1px solid var(--border); cursor: pointer; border-top-width: 3px; }
+  .phase-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
+  .phase-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+  .phase-tagline { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .phase-arrow { font-size: 12px; margin-top: 10px; }
+
+  /* ── STAT ROW ── */
+  .stat-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .stat-box { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 10px; text-align: center; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; color: var(--gold); }
+  .stat-lbl { font-size: 10px; color: var(--muted); margin-top: 2px; letter-spacing: 0.5px; }
+
+  /* ── PERSONAL BANNER ── */
+  .personal-banner { background: linear-gradient(135deg, rgba(224,84,106,0.15), rgba(46,196,169,0.1)); border: 1px solid rgba(232,184,75,0.2); border-radius: 14px; padding: 18px; margin-bottom: 12px; }
+  .personal-banner h3 { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--white); margin-bottom: 8px; }
+  .personal-banner p { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+  /* ── SCORECARD ── */
+  .check-item { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+  .check-item:last-child { border-bottom: none; }
+  .check-box { width: 20px; height: 20px; border-radius: 5px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+  .check-box.checked { border-color: var(--teal); background: rgba(46,196,169,0.2); }
+  .check-label { font-size: 13px; transition: all 0.15s; }
+  .check-label.checked { color: var(--muted); text-decoration: line-through; }
+
+  /* ── QUIT STRATEGY ── */
+  .quit-section { margin-bottom: 12px; }
+  .quit-rule { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .quit-rule:last-child { border-bottom: none; }
+  .quit-bullet { color: var(--rose); flex-shrink: 0; font-size: 8px; margin-top: 5px; }
+  .quit-text { font-size: 13px; color: var(--text); line-height: 1.55; }
+  .note-box { background: rgba(224,84,106,0.1); border-left: 3px solid var(--rose); border-radius: 0 8px 8px 0; padding: 12px; margin-top: 10px; font-size: 12px; color: var(--text); line-height: 1.6; font-style: italic; }
+
+  /* ── SCHEDULE ── */
+  .sched-row { display: flex; gap: 14px; align-items: baseline; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .sched-row:last-child { border-bottom: none; }
+  .sched-time { font-size: 11px; font-weight: 600; min-width: 88px; flex-shrink: 0; }
+  .sched-act { font-size: 13px; color: var(--text); line-height: 1.4; }
+
+  /* ── AI PATH ── */
+  .ai-tool { display: flex; gap: 14px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .ai-tool:last-child { border-bottom: none; }
+  .ai-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .ai-tool-name { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 3px; }
+  .ai-tool-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── INSTALL BANNER ── */
+  .install-tip { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; display: flex; gap: 12px; align-items: flex-start; }
+  .install-tip-icon { font-size: 20px; flex-shrink: 0; }
+  .install-tip-text { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .install-tip-text strong { color: var(--gold); }
+
+  /* active states */
+  .task-row:active { opacity: 0.7; }
+  .card-header:active { opacity: 0.8; }
+  .check-item:active { opacity: 0.7; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="app-header">
+  <div class="header-top">
+    <div>
+      <div class="app-eyebrow">Your Intentional Exit</div>
+      <div class="app-title">My <em>90-Day</em> Plan</div>
+    </div>
+    <div class="day-badge" id="dayBadge">Day 1</div>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-bar-wrap">
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="progress-labels">
+    <span class="progress-label" style="color:var(--rose)">Exit & Reset</span>
+    <span class="progress-label" style="color:var(--teal)">Discover & Build</span>
+    <span class="progress-label" style="color:var(--lavender)">Launch & Land</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showTab('overview',this)">Overview</button>
+  <button class="nav-tab" onclick="showTab('weeks',this)">Weeks</button>
+  <button class="nav-tab" onclick="showTab('ai',this)">AI Path</button>
+  <button class="nav-tab" onclick="showTab('quit',this)">Exit Strategy</button>
+  <button class="nav-tab" onclick="showTab('schedule',this)">Daily Rhythm</button>
+  <button class="nav-tab" onclick="showTab('scorecard',this)">Scorecard</button>
+</div>
+
+<!-- SCROLL AREA -->
+<div class="scroll-area" id="scrollArea"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────
+const START_DATE_KEY = 'plan_start_date';
+
+function getStartDate() {
+  let d = localStorage.getItem(START_DATE_KEY);
+  if (!d) { d = new Date().toISOString().split('T')[0]; localStorage.setItem(START_DATE_KEY, d); }
+  return new Date(d);
+}
+
+function getDayNumber() {
+  const start = getStartDate();
+  const now = new Date();
+  const diff = Math.floor((now - start) / (1000*60*60*24)) + 1;
+  return Math.min(Math.max(diff, 1), 90);
+}
+
+const phases = [
+  { id: 0, label: 'Phase 1', title: 'Exit & Reset', weeks: 'Weeks 1–3', tagline: 'Leave with grace. Breathe. Get clear.', color: 'var(--rose)' },
+  { id: 1, label: 'Phase 2', title: 'Discover & Build', weeks: 'Weeks 4–9', tagline: 'Validate paths. Master AI. Build your portfolio.', color: 'var(--teal)' },
+  { id: 2, label: 'Phase 3', title: 'Launch & Land', weeks: 'Weeks 10–13', tagline: 'Go to market. Get hired. Generate income.', color: 'var(--lavender)' },
+];
+
+const phaseColors = ['var(--rose)', 'var(--teal)', 'var(--lavender)'];
+
+const weeks = [
+  {
+    week: 1, phase: 0, title: 'The Clean Exit',
+    objective: 'Quit your job with intention, professionalism, and zero regret. How you leave is permanent — make it count.',
+    why: 'You\'ve been high-performing in revenue strategy for years. That means your reputation is an asset. A clean exit protects it. Burning bridges or slinking out cost you — even from a job you\'re done with.',
+    tasks: [
+      { task: 'Write your private "Why I\'m Leaving" letter', time: '2 hrs', detail: 'This is for you only. Write 2–3 pages: What am I actually tired of? What am I afraid to admit? What would I regret if I stayed? Keep this letter — you\'ll want to read it when doubt hits in Week 5.' },
+      { task: 'Draft and submit your resignation', time: '1.5 hrs', detail: 'Short, warm, forward-looking. Three paragraphs: gratitude, your end date, offer to transition. Never explain your reasons in writing. Template in the Exit Strategy tab.' },
+      { task: 'Build your handoff document', time: '2 hrs', detail: 'List everything you own: processes, dashboards, recurring tasks, key contacts. Offer to train your replacement. Leaving organized = leaving powerful.' },
+      { task: 'Save anonymized work samples', time: '1 hr', detail: 'Before you lose access: save clean versions of frameworks, models, decks, and dashboards you built. These become portfolio evidence. No proprietary data — just proof of your thinking.' },
+      { task: 'Have the conversation', time: '30 min', detail: 'Ask for a private meeting. Lead with gratitude. State your decision clearly: "I\'ve made the decision to move on. My last day will be X." Don\'t over-explain. Don\'t negotiate.' },
+    ],
+    reflections: [
+      'What am I most afraid will happen after I quit — and is that fear based in reality?',
+      'What would I tell a close friend who was in my exact position?',
+      'What does success look like for me personally in 6 months?',
+    ],
+    deliverable: 'Resignation submitted. Handoff doc drafted. Work samples saved. Private letter written.',
+  },
+  {
+    week: 2, phase: 0, title: 'The Decompression',
+    objective: 'Fully stop. Let your nervous system actually recover. Resist every urge to be productive immediately.',
+    why: 'Burnout creates a deficit that can\'t be fixed by just stopping work. Your brain needs slow, undemanding stimulation. If you jump straight into planning mode, you\'ll rebuild on a depleted foundation — and end up back here in 18 months.',
+    tasks: [
+      { task: 'No laptop before 10am — 7 days straight', time: 'Daily', detail: 'Start every morning with movement. A walk, workout, or stretch. No screens for the first 2 hours. This is the hardest rule and the most important one.' },
+      { task: 'Do one completely non-productive thing each day', time: '2–4 hrs', detail: 'Cook something new. Visit a museum. Watch a documentary rabbit hole. Read fiction. The goal is to remember you\'re a full human, not just a high performer.' },
+      { task: '7-day sleep audit', time: 'Ongoing', detail: 'No alarm unless necessary. Track how many hours your body actually wants. Most burned-out professionals are 1–2 hours chronically short. This data matters.' },
+      { task: 'Morning pages every day', time: '30 min', detail: '3 pages of stream-of-consciousness writing. No editing, no audience. Whatever comes up. This surfaces what you\'ve been suppressing and begins creating real mental clarity.' },
+      { task: 'Identify 3 things you want to explore "just for fun"', time: '1 hr', detail: 'Not career-related. What have you been curious about but never had time for? Write them down. You\'ll do one of them in Week 3.' },
+    ],
+    reflections: [
+      'What comes up when I have nothing I "have to" do?',
+      'What kind of person do I want to be — not just what job do I want to have?',
+      'When in my career did I feel most alive and actually engaged?',
+    ],
+    deliverable: '7-day sleep log. Morning pages journal started. 3 exploration interests identified.',
+  },
+  {
+    week: 3, phase: 0, title: 'The Clarity Audit',
+    objective: 'Run structured exercises to identify what you actually want — from work, money, and life.',
+    why: 'Your background in revenue strategy means you\'re wired to optimize systems. Now you need to optimize for the right outcomes. Most people jump from one bad fit to another because they never interrogated their actual values.',
+    tasks: [
+      { task: 'Complete the Ikigai mapping exercise', time: '2 hrs', detail: 'Map 4 circles: What you love | What you\'re good at | What the world needs | What you can be paid for. Write 5–10 answers each. Where they overlap is your signal. Be specific — not "strategy" but "designing systems that help sales teams stop flying blind."' },
+      { task: 'Run the Energy Audit on your last role', time: '2 hrs', detail: 'List every type of task/meeting/project from your last role. Mark each: Energizing (+) or Draining (-). The pattern reveals what types of work you should actually be designing your next chapter around.' },
+      { task: 'Write your ideal work week — unconstrained', time: '2 hrs', detail: 'Ignore what\'s "realistic." Write a detailed description of your ideal Tuesday two years from now. When do you wake up? What do you work on? Who do you interact with? How much do you earn? How do you feel at 6pm? Be uncomfortably specific.' },
+      { task: 'Research 3 career paths that interest you', time: '4 hrs', detail: 'For each path (e.g., AI Strategy Consultant, VP RevOps at a Series B, Operator of a small AI-tools business): research salary, day-to-day reality, required skills, and find 3 real people on LinkedIn doing it. Don\'t evaluate yet.' },
+      { task: 'Define your financial floor', time: '1 hr', detail: 'Monthly expenses + 20% buffer = your floor number. Any path that clears this is viable. Knowing this removes enormous anxiety and gives you a clear target for freelance rates or minimum salary.' },
+    ],
+    reflections: [
+      'What did the energy audit reveal that surprised me?',
+      'Which career path excites me most right now — and why?',
+      'Am I running toward something, or just away from my last job?',
+    ],
+    deliverable: 'Completed Ikigai map. Energy audit done. Ideal work week written. 3 paths shortlisted. Financial floor calculated.',
+  },
+  {
+    week: 4, phase: 1, title: 'Path Validation Sprint',
+    objective: 'Test your 3 career path hypotheses against reality before committing to any of them.',
+    why: 'Your instincts about your next role are almost certainly wrong in at least one important way. The only way to validate is to talk to real people doing the work. One conversation will teach you more than 10 hours of research.',
+    tasks: [
+      { task: 'Have 3 "curiosity conversations" (one per path)', time: '3 hrs', detail: 'DM or email people doing work you\'re exploring. Script: "Hi [Name], I came across your work. I\'m at a career transition point and exploring [path]. Would you be open to a 20-min call? I\'m not looking for a job — just perspective." Ask: How did you get here? What\'s a real day like? What do you wish you\'d known?' },
+      { task: 'Do one "shadow" exercise per path', time: '6 hrs', detail: 'AI Consultant: draft a fake consulting proposal. Freelance RevOps: look at Toptal and Catalant listings — what are people asking for? Strategy role: pull 5 JDs and reverse-engineer what they actually want vs. what they say.' },
+      { task: 'Score each path on 6 criteria', time: '2 hrs', detail: 'Rate 1–5: Income Potential | Lifestyle Fit | Stress Level | Time to First Income | Alignment with Strengths | Excitement. The highest score isn\'t automatically right, but the exercise forces you to be explicit about tradeoffs.' },
+      { task: 'Formally eliminate one path', time: '30 min', detail: 'Write one paragraph explaining which path you\'re cutting and why. Constraint drives clarity. Two focused paths beat three vague ones.' },
+      { task: 'Update your LinkedIn for quiet exploration', time: '2 hrs', detail: 'Headline: "Revenue Strategy & AI | Exploring new challenges in [areas]." About: warm, curious, forward-looking. Turn on Open to Work (private mode). Plant seeds with no pressure.' },
+    ],
+    reflections: [
+      'What did the conversations reveal that surprised me about my assumptions?',
+      'Which path felt most "like me" when I was actually doing the taste test?',
+      'What fear is hiding behind any path I keep mentally avoiding?',
+    ],
+    deliverable: '3 curiosity conversations done. 3 paths scored. 1 eliminated. 2 remaining paths clear. LinkedIn updated.',
+  },
+  {
+    week: 5, phase: 1, title: 'AI Foundations',
+    objective: 'Build a working, practical understanding of AI tools — focused on business use, not coding.',
+    why: 'AI is not a skill — it\'s a meta-skill that amplifies everything else you do. You don\'t need to code. You need to know how to deploy these tools to solve real revenue and strategy problems, which is exactly where your experience already lives.',
+    tasks: [
+      { task: 'Learn how LLMs actually work (high-level)', time: '1 hr', detail: 'Watch Andrej Karpathy\'s "Intro to LLMs" on YouTube (1 hr). Just enough to understand what these tools are and aren\'t. This context makes you significantly smarter at using them.' },
+      { task: 'Master prompt engineering for strategy work', time: '4 hrs', detail: 'Read Anthropic\'s prompt engineering guide at docs.anthropic.com. Then practice 10 prompts in Claude: data analysis, writing, competitive research, decision frameworks. Build a personal prompt library — save every good prompt you write.' },
+      { task: 'Learn Perplexity AI for fast research', time: '2 hrs', detail: 'Perplexity is cited, web-connected research at speed. Practice: research a company before a call, understand a market in 20 minutes, find competitors in a new space. This replaces 2 hours of Googling with 10 minutes of directed research.' },
+      { task: 'Explore automation: Zapier + Make.com', time: '4 hrs', detail: 'Sign up for both free tiers. Build one automation: e.g., "When I get an email tagged [keyword], add it to a sheet and draft a reply." Understanding automation workflows is table stakes for any AI-adjacent role.' },
+      { task: 'Start your AI learning log', time: '30 min', detail: 'Create a Notion doc or Google Doc: "AI Tools | What I Built | What I Learned." This becomes evidence of your learning and a portfolio entry.' },
+    ],
+    reflections: [
+      'Which AI tool surprised me most with what it could actually do?',
+      'What problem from my last job could I have solved in a fraction of the time with these tools?',
+      'How would I explain the business value of AI to a skeptical CRO?',
+    ],
+    deliverable: 'Prompt library (10+ prompts). 1 automation built. AI learning log started. Core tools active.',
+  },
+  {
+    week: 6, phase: 1, title: 'AI for Revenue & Strategy',
+    objective: 'Go deep on AI applications specific to your domain — where your 10,000 hours already live.',
+    why: 'Generic AI knowledge is table stakes. What makes you genuinely valuable is applying AI inside revenue operations, strategy, and GTM functions. This is the intersection where almost nobody else is operating yet.',
+    tasks: [
+      { task: 'Build an AI-powered territory analysis (Portfolio Project #1)', time: '5 hrs', detail: 'Take a public dataset (Kaggle or data.gov). Use Claude to: build a territory segmentation framework, identify top-tier accounts, model revenue distribution. Document your thinking. This is your first portfolio piece.' },
+      { task: 'Create an AI-enhanced revenue reporting template', time: '4 hrs', detail: 'Build a reusable tool: a Google Sheet or Notion template where you paste weekly revenue data and a prompt generates an executive summary + risks + recommendations. Productize it. This is something you can show and demo.' },
+      { task: 'Learn NotebookLM for strategic research', time: '2 hrs', detail: 'Upload 3 earnings calls + 2 industry reports. Ask strategic questions. This tool is a killer for competitive intelligence and pre-meeting research. Practice building a "company briefing" workflow.' },
+      { task: 'Map AI use cases to your 2 target paths', time: '2 hrs', detail: 'For each remaining career path: list 5 specific ways AI makes someone in that role dramatically more effective. This becomes your interview answer, your consulting pitch, and your positioning.' },
+      { task: 'Draft the AI Opportunity Audit (Portfolio Project #2)', time: '4 hrs', detail: 'Pick a company you\'d want to work for. Write a 2-page "AI Opportunity Audit": Where are they underusing AI? What would you implement? What would it save? Public info + AI research tools only. This is a consulting pitch in disguise.' },
+    ],
+    reflections: [
+      'What AI application in revenue strategy would have the most immediate business value right now?',
+      'If I were advising a CRO today, what\'s the first AI tool I\'d tell them to implement?',
+      'What skills gap do I still feel most insecure about?',
+    ],
+    deliverable: 'Portfolio Project #1 complete. AI reporting template built. Company AI Audit drafted (Project #2).',
+  },
+  {
+    week: 7, phase: 1, title: 'Advanced AI Toolkit',
+    objective: 'Build outputs that make hiring managers and clients stop scrolling — visible, impressive, demoable.',
+    why: 'The difference between someone who "knows AI" and someone who demonstrates AI is a portfolio. This week you create outputs you can show, not just talk about. That gap is where most candidates lose.',
+    tasks: [
+      { task: 'Learn Notion AI, Gamma, and Beautiful.ai', time: '4 hrs', detail: 'Notion AI: build a living strategy doc. Gamma.app: generate a polished deck from a prompt (use it for your company audit). Beautiful.ai: present data at board-meeting quality. These let you produce executive-level outputs in hours.' },
+      { task: 'Build a custom Claude Project for a business use case (Portfolio Project #3)', time: '5 hrs', detail: 'Build a Claude Project that acts as a "Revenue Strategy Advisor." Upload relevant frameworks, write a custom system prompt, test it. Example: a tool that answers "Should we expand into Enterprise?" based on your uploaded models. This is impressive and completely demoable.' },
+      { task: 'Learn ChatGPT Advanced Data Analysis', time: '3 hrs', detail: 'Upload any CSV (sales or revenue data). Ask it to visualize trends, identify anomalies, build a simple forecast. Practice directing the outputs. Screenshot the best results — these go in your portfolio.' },
+      { task: 'Create your AI tools one-pager', time: '2 hrs', detail: 'Format: Tool | Use Case | What I Built | Time Saved. One page. This becomes an attachment with job apps or a talking point in every networking conversation. It immediately sets you apart from 95% of candidates.' },
+    ],
+    reflections: [
+      'Which tool would I be most excited to demo in an interview right now?',
+      'What would I build if I had 30 days and zero constraints?',
+      'How do I talk about AI without sounding like I\'m overclaiming?',
+    ],
+    deliverable: 'Custom Claude Project built (Project #3). Gamma deck created. AI one-pager complete. 3 portfolio projects documented.',
+  },
+  {
+    week: 8, phase: 1, title: 'Resume & Story Architecture',
+    objective: 'Reframe your entire career narrative around your new direction and real AI capabilities.',
+    why: 'Your resume isn\'t a history document — it\'s a sales page. Every word should answer: "Why should we hire this specific person for this specific role right now?" Most high-performers write the wrong document. Your background in RevOps and GTM strategy is genuinely differentiated — but only if it\'s framed correctly.',
+    tasks: [
+      { task: 'Audit your current resume with Claude', time: '1.5 hrs', detail: 'Paste your full resume into Claude with this prompt: "I am a revenue strategy/sales ops professional transitioning into [target roles]. Critique this resume ruthlessly: what\'s weak, what\'s missing, what\'s the wrong framing, what should be cut." Take every note seriously.' },
+      { task: 'Rewrite your headline and summary', time: '2 hrs', detail: 'Headline formula: [What you do] + [Who you help] + [Unique angle]. Example: "Revenue Strategy Leader | Helping B2B SaaS Scale GTM Operations with AI-Enhanced Insights." Summary: 3–4 lines, first person, tells a story, ends with a specific value statement.' },
+      { task: 'Rewrite your top 10 bullets (STAR-Impact format)', time: '4 hrs', detail: 'Bad: "Managed sales operations processes." Good: "Redesigned territory model for 45-person sales org using data segmentation — increased pipeline coverage 34% in 2 quarters." Every bullet needs a result with scale. Rewrite your 10 most important ones.' },
+      { task: 'Add your AI Skills section', time: '1.5 hrs', detail: 'Section: "Tools & Technologies." Include: AI/LLM Tools (Claude, ChatGPT, Perplexity), Automation (Zapier, Make), Analysis (ChatGPT ADA, NotebookLM), Productivity (Notion AI, Gamma). Add context: "Applied AI tools to reduce rev reporting cycle from 3 days to 4 hours."' },
+      { task: 'Build master resume + 2 tailored versions', time: '3 hrs', detail: 'Master: everything. Version A: employed roles (VP Strategy, RevOps Director). Version B: consulting/advisory framing. Each version emphasizes different strengths. Never send the master directly.' },
+    ],
+    reflections: [
+      'What\'s the story I\'m telling about who I am? Does it feel true?',
+      'What do I most want a hiring manager to feel when they read my resume?',
+      'What am I underselling that actually deserves more real estate?',
+    ],
+    deliverable: 'Master resume. 2 tailored versions. New headline, summary, 10 rewritten bullets, AI skills section.',
+  },
+  {
+    week: 9, phase: 1, title: 'Portfolio & Online Presence',
+    objective: 'Build a digital footprint that makes people find you before you apply.',
+    why: 'In 2025, your online presence is your first interview. Hiring managers and potential clients Google you before they reply to anything. An intentional presence compounds and generates inbound opportunities — this is especially true for someone at the VP/Director level.',
+    tasks: [
+      { task: 'Rebuild LinkedIn top-to-bottom', time: '4 hrs', detail: 'Photo: professional, warm, high contrast. Banner: custom Canva design with your positioning line. About: first person, story arc, ends with CTA. Featured: link to portfolio. Experience: updated bullets. Skills: curated to target roles + AI. Every section intentional.' },
+      { task: 'Write and post 3 LinkedIn pieces', time: '5 hrs', detail: 'Post 1: "What I learned building an AI audit for [company type]" — one specific insight from Project #2. Post 2: "5 AI tools that changed how I think about revenue strategy" — practical, shareable. Post 3: "I left my job intentionally. Here\'s what I discovered." — personal, courageous. Use Claude to draft and polish.' },
+      { task: 'Create a simple portfolio page', time: '3 hrs', detail: 'Use Notion, Gamma, or Carrd.co. Sections: About (2 sentences), What I Do, Projects (3 summaries with visuals), Contact. Link from LinkedIn. This is the difference between a resume and a presence.' },
+      { task: 'Set up one platform based on your chosen path', time: '2 hrs', detail: 'If consulting: profile on Toptal, Catalant, or Expert360. If employment: join Revenue Collective or GTM operator Slack communities. If content/thought leadership: start a Substack (even with 0 subscribers — it signals seriousness).' },
+    ],
+    reflections: [
+      'What do I want to be known for in 18 months?',
+      'What would I need to believe about myself to post publicly about my work?',
+      'Whose online presence do I admire — and what specifically do they do differently?',
+    ],
+    deliverable: 'LinkedIn rebuilt. 3 posts published. Portfolio page live. Secondary platform active.',
+  },
+  {
+    week: 10, phase: 2, title: 'Go to Market',
+    objective: 'Launch your job search or freelance pipeline with a high-signal, targeted strategy.',
+    why: 'Most job searches fail because they\'re either too passive (spray-and-pray applications) or too chaotic. The people who land fast treat the job search like a sales pipeline — with targets, outreach cadences, and follow-up systems. This is exactly how you think already.',
+    tasks: [
+      { task: 'Define your 30-company target list', time: '3 hrs', detail: 'Criteria: Series B–D or post-IPO, 200–2000 employees, industries you understand, products you believe in. Use LinkedIn, Crunchbase, Glassdoor. Spreadsheet: Company | Stage | Why I Want to Work There | Target Role | Key Contact.' },
+      { task: 'Build your outreach system', time: '3 hrs', detail: 'Template 3 scenarios: cold DM to hiring manager, warm intro request, response to a posting. Formula: 1 line about them, 1 line about you, 1 specific ask. Use Claude to personalize each message. Target: 10 quality outreaches per day.' },
+      { task: 'Submit 5 fully tailored applications', time: '5 hrs', detail: 'For each role: read the JD carefully, identify the top 3 things they care about, customize your summary and bullets, write a 4-sentence cover note. Quality over volume — always. A tailored application beats 10 generic ones.' },
+      { task: 'If freelance path: send your first proposal', time: '4 hrs', detail: 'Identify 3 companies you could help right now. Write a 1-page proposal: "Here\'s what I see as your biggest revenue/ops challenge. Here\'s how I\'d approach it. Here\'s what I\'d deliver in 30 days and what it costs." Send it. Real proposals teach more than planning.' },
+      { task: 'Set up your tracking dashboard', time: '1 hr', detail: 'Notion or spreadsheet. Columns: Company | Role | Date | Status | Next Action | Follow-up Date | Notes. Review every morning. Without a tracking system, the job search becomes chaos.' },
+    ],
+    reflections: [
+      'Am I applying to roles I\'m genuinely excited about, or just roles I think I can get?',
+      'What\'s my response rate from outreach — and what could improve it?',
+      'What\'s the bravest professional move I could make this week?',
+    ],
+    deliverable: '30-company list. Outreach running (10/day). 5 tailored applications. Tracking dashboard active.',
+  },
+  {
+    week: 11, phase: 2, title: 'Interview Mastery',
+    objective: 'Turn conversations into offers through preparation, storytelling, and AI-powered research.',
+    why: 'Interviews reward people who know themselves, understand the company, and tell compelling stories. AI gives you a massive preparation advantage. Your RevOps background means you can quantify impact precisely — use that.',
+    tasks: [
+      { task: 'Build your library of 10 STAR stories', time: '4 hrs', detail: 'Prepare 10 structured stories: 2 leading through ambiguity, 2 using data to influence decisions, 2 driving cross-functional alignment, 2 building something from scratch, 2 recovering from a failure. These 10 stories answer 90% of interview questions.' },
+      { task: 'Use Claude to prep for every specific interview', time: '2 hrs per interview', detail: 'Before each: "I\'m interviewing for [role] at [company]. Based on this JD, what are the 10 most likely questions? What do I need to research? What questions should I ask?" This is an unfair advantage over other candidates.' },
+      { task: 'Complete a mock interview with Claude', time: '2 hrs', detail: '"Act as a rigorous interviewer for a VP Revenue Strategy role. Ask me 10 questions and critique my answers for clarity, specificity, and measurable impact." Uncomfortable. Highly effective.' },
+      { task: 'Research every interviewer before each call', time: '1 hr per interview', detail: 'LinkedIn: shared interests, past companies, content they\'ve posted. Mention one genuine observation early. This differentiates you from 95% of candidates immediately.' },
+      { task: 'Perfect your AI advantage answer', time: '1.5 hrs', detail: '"How do you use AI in your work?" Your answer: "I built [project X] using [tool]. It reduced [time/cost] by [amount] and helped [stakeholder] make better decisions." Offer to demo. This is often what they\'ll remember you by.' },
+    ],
+    reflections: [
+      'Which of my stories am I most confident telling? Which needs more work?',
+      'What am I most afraid they\'ll ask? (Prepare that answer first.)',
+      'After each conversation: What went well? What would I do differently?',
+    ],
+    deliverable: '10 STAR stories written. Mock interview done. AI answer polished. Interview prep system running.',
+  },
+  {
+    week: 12, phase: 2, title: 'Momentum & Negotiation',
+    objective: 'Convert conversations to offers and negotiate with data and confidence.',
+    why: 'The final stretch is where most people lose momentum. The average professional leaves $10K–$30K on the table by not negotiating. Your background in revenue strategy means you understand deal dynamics — apply that here.',
+    tasks: [
+      { task: 'Follow up on every open thread', time: '2 hrs', detail: 'Every application or conversation silent for 5+ days: send a brief warm follow-up. "Hi [Name] — wanted to check in. Still very interested, and wanted to share [one new thing from this week]." Activity creates activity.' },
+      { task: 'Learn negotiation fundamentals', time: '2 hrs', detail: 'Key tactics: always negotiate (100% of the time). Let them anchor first. Counter with a range. Negotiate everything: salary, bonus, equity, start date, remote flexibility, title. Use Claude to roleplay negotiation scenarios for your specific situation.' },
+      { task: 'Research compensation benchmarks', time: '1.5 hrs', detail: 'Use: Levels.fyi, LinkedIn Salary, Glassdoor, Comprehensive.io. Know the 25th, 50th, 75th percentile for your target roles in your market. Go in with data, not feelings.' },
+      { task: 'Build an offer evaluation scorecard', time: '1.5 hrs', detail: 'Matrix: Total Comp | Growth Potential | Culture | Mission | Manager Quality | Work-Life | AI/Innovation mindset | Location. Weight each. Score each offer. Don\'t make the call on comp alone — you\'ve done this before and know it\'s a trap.' },
+      { task: 'If freelancing: send 3 paid proposals', time: '4 hrs', detail: 'Push to have 3 active paid conversations this week — even small ones. A $500 consulting call validates your market value more than any amount of planning. Price your time at a rate that respects your experience.' },
+    ],
+    reflections: [
+      'What would I accept right now vs. what would I actually be excited about?',
+      'Am I accepting "good enough" because I\'m anxious to be earning again?',
+      'What does a truly good outcome look like — not just "a job"?',
+    ],
+    deliverable: 'All threads followed up. Negotiation prep done. Comp benchmarks researched. Offer scorecard ready.',
+  },
+  {
+    week: 13, phase: 2, title: 'Land & Begin',
+    objective: 'Close your first opportunity and set yourself up for a genuinely different chapter.',
+    why: 'This isn\'t just a job transition — it\'s a relationship reset with your career. This week closes the loop on 90 days of intentional work and opens the door to something you actually chose.',
+    tasks: [
+      { task: 'Evaluate and accept your best opportunity', time: '2 hrs', detail: 'Use your scorecard. Trust the data AND your gut. If they don\'t align, that misalignment is important information. Ask: "Would I be genuinely proud to do this work?" If yes: close it.' },
+      { task: 'Write your 30-60-90 plan for the new role', time: '3 hrs', detail: 'Before Day 1: draft a 30-60-90 plan. Use AI to research the company\'s real challenges. Build smart questions for each stakeholder. Bring this to your first week. It signals your caliber immediately.' },
+      { task: 'Read your Week 1 letter', time: '30 min', detail: 'Go back to the "Why I\'m Leaving" letter you wrote on Day 1. Read your morning pages from Week 2. Notice how much clarity you\'ve built. Write a "Letter to Future Me" — what you\'ve learned, what you want to remember, what you commit to.' },
+      { task: 'Keep one AI learning habit going', time: 'Ongoing', detail: 'Commit to one continued behavior: a weekly build, a monthly new tool to explore, a newsletter. AI is moving too fast to stop. Your advantage comes from compounding, not a one-time sprint.' },
+      { task: 'Actually celebrate', time: 'One evening', detail: 'Plan something meaningful. Dinner, a trip, a gift to yourself. You didn\'t just change jobs. You changed your relationship to your career. That deserves real acknowledgment.' },
+    ],
+    reflections: [
+      'What do I know about myself now that I didn\'t know 90 days ago?',
+      'What kind of professional do I want to become in the next 3 years?',
+      'Who helped me along the way — and how can I pay that forward?',
+    ],
+    deliverable: 'Opportunity accepted (or first income generated). 30-60-90 plan written. New chapter: begun.',
+  },
+];
+
+const aiTools = [
+  { icon: '🧠', name: 'Claude', color: '#e8b84b', use: 'Strategy, writing, analysis, custom Projects', why: 'Your primary thinking partner. Build custom Projects for revenue strategy. Best for nuanced, multi-step reasoning.' },
+  { icon: '⚡', name: 'ChatGPT + ADA', color: '#2ec4a9', use: 'Data analysis, visualizations, forecasting', why: 'Advanced Data Analysis (ADA) turns any CSV into insights. Upload your revenue data and ask it to find patterns.' },
+  { icon: '🔍', name: 'Perplexity AI', color: '#a08de8', use: 'Fast research with citations', why: 'Replaces 2 hours of Googling with 10 minutes of directed research. Use before every company call.' },
+  { icon: '📊', name: 'Gamma.app', color: '#e0546a', use: 'Decks and presentations from prompts', why: 'Generate boardroom-quality slides in minutes. Use for your company audit and portfolio projects.' },
+  { icon: '📚', name: 'NotebookLM', color: '#2ec4a9', use: 'Document analysis and research synthesis', why: 'Upload earnings calls, reports, competitor docs — then have a conversation with them. Killer for due diligence.' },
+  { icon: '⚙️', name: 'Zapier / Make', color: '#e8b84b', use: 'Workflow automation without code', why: 'Build automated pipelines between tools. Understanding automation is table stakes for any AI-adjacent role.' },
+  { icon: '✨', name: 'Notion AI', color: '#a08de8', use: 'Living documents, templates, summaries', why: 'AI-enhanced workspace for your strategy docs, templates, and portfolio. Shows how you think, not just what you did.' },
+  { icon: '🎯', name: 'Beautiful.ai', color: '#e0546a', use: 'Data visualization and polished decks', why: 'When Gamma isn\'t enough polish. For final portfolio pieces and interview prep presentations.' },
+];
+
+const quitSections = [
+  {
+    title: 'When to Quit',
+    color: 'var(--rose)',
+    items: [
+      'You have at least 3 months of expenses saved (you do ✓)',
+      'You have a "pull toward" — not just a "push away from"',
+      'You\'ve drafted your 90-day plan and it\'s realistic',
+      'You\'ve done a "what if I stay" exercise and your gut still says no',
+      'You\'re deciding on a good week — not a bad one',
+    ],
+    note: 'Rule: Make your resignation decision on a good week. If you\'d still want to leave on your best day, leave. A bad week ≠ a bad career.',
+  },
+  {
+    title: 'How to Communicate It',
+    color: 'var(--rose)',
+    items: [
+      'Request a private meeting — never over email first',
+      'Lead with gratitude: specific, genuine, 1–2 sentences',
+      'State your decision simply — no lengthy explanation',
+      'Give your end date: 2 weeks standard, 3–4 shows respect',
+      'Offer a handoff plan: this permanently protects your reputation',
+      'Don\'t negotiate counter-offers if your decision is final',
+      'Follow up with a brief written resignation for records',
+    ],
+    note: 'What NOT to say: real reasons (save for your journal), anything negative about people or company, anything uncertain.',
+  },
+  {
+    title: 'Mental Preparation',
+    color: 'var(--rose)',
+    items: [
+      'Expect a wave of anxiety in the 24–72 hours after submitting — this is completely normal',
+      'Prepare your counter-offer response in advance — know your answer before they make it',
+      'Tell 2–3 trusted people before you submit so you\'re not processing it alone',
+      'Have Week 2\'s decompression plan ready before you submit the resignation',
+      'Separate "leaving" from "failing" — they are not the same thing',
+    ],
+    note: 'Have something grounding planned for the 2–3 days after submitting. The anxiety peak is real and temporary.',
+  },
+  {
+    title: 'Risk Mitigation',
+    color: 'var(--rose)',
+    items: [
+      'Financial: 3 months minimum, 6 preferred. Know your floor number before you quit.',
+      'Identity: Much of your identity may be tied to your title. Start building identity anchors outside work now.',
+      'Network: Don\'t disappear. Stay connected with colleagues through the transition.',
+      'Skills gap: The AI learning plan addresses this directly — start before you quit if possible.',
+      'FOMO: Other people\'s fast moves aren\'t your metric. 90 intentional days is not slow.',
+    ],
+  },
+];
+
+const schedules = [
+  {
+    label: 'Phase 1 · Weeks 1–3: Reset Mode',
+    color: 'var(--rose)',
+    slots: [
+      { time: '7:00–8:30', act: 'Movement + no screens' },
+      { time: '8:30–9:00', act: 'Morning pages (3 pages, stream of consciousness)' },
+      { time: '9:00–12:00', act: 'Weekly focus task (quitting, clarity exercises)' },
+      { time: '12:00–1:00', act: 'Lunch + walk — phone down' },
+      { time: '1:00–3:00', act: 'Research / reading / exploration' },
+      { time: '3:00–5:00', act: 'Free time — something non-productive' },
+      { time: '5:00–6:30', act: 'Exercise or outdoor time' },
+      { time: '7:00–9:00', act: 'Wind-down: reflection journal, light reading' },
+    ]
+  },
+  {
+    label: 'Phase 2 · Weeks 4–9: Learning Mode',
+    color: 'var(--teal)',
+    slots: [
+      { time: '7:00–8:00', act: 'Movement + daily planning' },
+      { time: '8:00–8:30', act: 'Morning pages + daily intention' },
+      { time: '8:30–12:00', act: 'Deep work: AI learning or portfolio project' },
+      { time: '12:00–1:00', act: 'Lunch + walk' },
+      { time: '1:00–3:00', act: 'Career exploration: research, conversations, networking' },
+      { time: '3:00–4:00', act: 'LinkedIn engagement / content creation' },
+      { time: '4:00–5:30', act: 'Admin: applications, follow-ups, tracking' },
+      { time: '5:30–7:00', act: 'Exercise + decompression' },
+      { time: '7:00–9:00', act: 'Light reading, reflection, evening journal' },
+    ]
+  },
+  {
+    label: 'Phase 3 · Weeks 10–13: Launch Mode',
+    color: 'var(--lavender)',
+    slots: [
+      { time: '7:00–8:00', act: 'Movement + energy check' },
+      { time: '8:00–8:30', act: 'Review pipeline + set daily targets' },
+      { time: '8:30–10:00', act: 'Outreach block: 10 messages / applications' },
+      { time: '10:00–12:00', act: 'Interview prep or AI project work' },
+      { time: '12:00–1:00', act: 'Lunch + movement' },
+      { time: '1:00–3:00', act: 'Conversations / interviews / calls' },
+      { time: '3:00–4:00', act: 'Follow-up + tracking update' },
+      { time: '4:00–5:00', act: 'Learning or content creation' },
+      { time: '5:00–7:00', act: 'Exercise + mental reset' },
+      { time: '7:00–9:00', act: 'Reflection + energy management' },
+    ]
+  },
+];
+
+const scorecard = [
+  { cat: 'Mind & Body', color: 'var(--rose)', items: ['Morning ritual 5+ days (movement before screens)', 'Exercise 4+ times this week', 'Morning pages 5+ days', 'Sleep 7+ hours average'] },
+  { cat: 'Learning & Building', color: 'var(--teal)', items: ['Completed week\'s AI learning tasks', 'Added to prompt library', 'Updated AI learning log', 'Built or iterated on a portfolio project'] },
+  { cat: 'Career Progress', color: 'var(--lavender)', items: ['Completed week\'s primary deliverable', '1+ meaningful career conversation', 'Updated tracking dashboard', 'Posted or engaged on LinkedIn'] },
+  { cat: 'Job / Income Search', color: 'var(--gold)', items: ['10+ outreach messages sent (Phase 3)', '5+ tailored applications submitted (Phase 3)', 'All threads followed up within 5 days', '1+ new company added to target list'] },
+];
+
+// ── STATE ──────────────────────────────────────────────────
+let currentTab = 'overview';
+let openWeek = null;
+let openTask = null;
+let openQuit = null;
+let openSchedule = null;
+let checks = JSON.parse(localStorage.getItem('checks') || '{}');
+
+function saveChecks() { localStorage.setItem('checks', JSON.stringify(checks)); }
+
+// ── RENDER ─────────────────────────────────────────────────
+function render() {
+  const area = document.getElementById('scrollArea');
+  if (currentTab === 'overview') area.innerHTML = renderOverview();
+  else if (currentTab === 'weeks') area.innerHTML = renderWeeks();
+  else if (currentTab === 'ai') area.innerHTML = renderAI();
+  else if (currentTab === 'quit') area.innerHTML = renderQuit();
+  else if (currentTab === 'schedule') area.innerHTML = renderSchedule();
+  else if (currentTab === 'scorecard') area.innerHTML = renderScorecard();
+
+  updateProgress();
+  attachEvents();
+  area.scrollTop = 0;
+}
+
+function updateProgress() {
+  const day = getDayNumber();
+  const pct = Math.min((day / 90) * 100, 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('dayBadge').textContent = 'Day ' + day;
+}
+
+// ── OVERVIEW ──────────────────────────────────────────────
+function renderOverview() {
+  const day = getDayNumber();
+  const currentWeek = Math.ceil(day / 7);
+  const cw = weeks.find(w => w.week === Math.min(currentWeek, 13));
+  return `
+  <div class="install-tip">
+    <div class="install-tip-icon">📱</div>
+    <div class="install-tip-text"><strong>Add to Home Screen:</strong> Tap the Share button in Safari, then "Add to Home Screen" to access this plan like a native app — no internet needed after first load.</div>
+  </div>
+
+  <div class="personal-banner">
+    <h3>Your Intentional Exit</h3>
+    <p>You're a high-performing revenue strategy professional who's earned the right to leave with intention. This plan is built for you specifically — not a generic job seeker, but someone with real operational depth who wants AI as a leverage skill and clarity on what comes next.</p>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-box"><div class="stat-num">90</div><div class="stat-lbl">Days Total</div></div>
+    <div class="stat-box"><div class="stat-num">${day}</div><div class="stat-lbl">Day Today</div></div>
+    <div class="stat-box"><div class="stat-num">W${Math.min(currentWeek, 13)}</div><div class="stat-lbl">Current Week</div></div>
+  </div>
+
+  ${cw ? `
+  <div class="card" style="border-top: 3px solid ${phaseColors[cw.phase]}; margin-bottom: 12px;">
+    <div class="card-header" onclick="showTab('weeks',null); openWeek=${cw.week}; render();">
+      <div>
+        <div class="week-phase" style="color:${phaseColors[cw.phase]}">This Week · W${cw.week}</div>
+        <div class="week-title">${cw.title}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;">${cw.objective.slice(0,80)}…</div>
+      </div>
+      <div class="chevron">›</div>
+    </div>
+  </div>` : ''}
+
+  ${phases.map(p => `
+  <div class="phase-card" style="border-top-color:${p.color}; background:var(--card);" onclick="showTab('weeks',null); openWeek=null; render();">
+    <div class="phase-label" style="color:${p.color}">${p.label} · ${p.weeks}</div>
+    <div class="phase-title">${p.title}</div>
+    <div class="phase-tagline">${p.tagline}</div>
+    <div class="phase-arrow" style="color:${p.color}">View weeks →</div>
+  </div>`).join('')}
+
+  <div class="card" style="margin-top:4px;">
+    <div style="padding:16px 18px 6px;">
+      <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--white);margin-bottom:4px;">Your 6 Goals</div>
+    </div>
+    <div style="padding:0 18px 14px;">
+      ${['Exit with intention and zero regret','Mental reset and genuine clarity','Validate 2–3 career paths in the real world','Build real, demoable AI skills','Create a portfolio that proves your value','Land a role or income stream you chose'].map((g,i)=>`
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-bottom:${i<5?'1px solid var(--border)':'none'};">
+        <span style="font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:var(--gold);opacity:0.4;min-width:24px;">0${i+1}</span>
+        <span style="font-size:13px;color:var(--text);line-height:1.5;">${g}</span>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ── WEEKS ─────────────────────────────────────────────────
+function renderWeeks() {
+  return weeks.map(w => {
+    const isOpen = openWeek === w.week;
+    const pc = phaseColors[w.phase];
+    return `
+    <div class="card" style="${isOpen ? `border-color:${pc};` : ''}border-top: 3px solid ${pc};">
+      <div class="card-header" onclick="toggleWeek(${w.week})">
+        <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
+          <div class="week-num" style="color:${pc}">${w.week}</div>
+          <div class="week-meta">
+            <div class="week-phase" style="color:${pc}">${phases[w.phase].title}</div>
+            <div class="week-title">${w.title}</div>
+          </div>
+        </div>
+        <div class="chevron ${isOpen?'open':''}">›</div>
+      </div>
+      ${isOpen ? `
+      <div class="card-body">
+        <div class="obj-box" style="background:${pc}18;border-left-color:${pc};">
+          <div class="section-label" style="color:${pc};margin-top:0;">Objective</div>
+          <p style="font-size:13px;color:var(--text);line-height:1.65;">${w.objective}</p>
+        </div>
+
+        <div class="section-label">Why This Matters</div>
+        <p style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:4px;">${w.why}</p>
+
+        <div class="section-label">Tasks · ${w.tasks.length} this week</div>
+        <div style="background:var(--surface);border-radius:10px;overflow:hidden;">
+        ${w.tasks.map((t,ti) => {
+          const tkey = `w${w.week}t${ti}`;
+          const isExp = openTask === tkey;
+          return `
+          <div class="task-item">
+            <div class="task-row" onclick="toggleTask('${tkey}')">
+              <div class="task-num" style="border-color:${pc};color:${pc};">${ti+1}</div>
+              <div class="task-info">
+                <div class="task-name">${t.task}</div>
+                <div class="task-time">⏱ ${t.time}</div>
+              </div>
+              <div class="chevron ${isExp?'open':''}" style="font-size:14px;">›</div>
+            </div>
+            ${isExp ? `<div class="task-detail">${t.detail}</div>` : ''}
+          </div>`;
+        }).join('')}
+        </div>
+
+        <div class="section-label">Reflection Prompts</div>
+        ${w.reflections.map(r => `
+        <div class="reflection-item">
+          <span class="reflection-diamond">✦</span>
+          <span class="reflection-text">${r}</span>
+        </div>`).join('')}
+
+        <div class="deliverable">
+          <div class="deliverable-label">✓ Week Deliverable</div>
+          <div class="deliverable-text">${w.deliverable}</div>
+        </div>
+      </div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ── AI PATH ───────────────────────────────────────────────
+function renderAI() {
+  return `
+  <div class="personal-banner">
+    <h3>Your AI Leverage Plan</h3>
+    <p>You don't need to code. You need to apply AI inside revenue strategy, GTM operations, and business intelligence — the exact domain where your experience already compounds it. These 8 tools are your starting stack.</p>
+  </div>
+
+  <div class="card">
+    <div style="padding:16px 18px 6px;">
+      <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--white);">Your AI Stack</div>
+    </div>
+    <div style="padding:0 18px 14px;">
+    ${aiTools.map(t => `
+      <div class="ai-tool">
+        <div class="ai-icon" style="background:${t.color}22;">${t.icon}</div>
+        <div>
+          <div class="ai-tool-name" style="color:${t.color}">${t.name}</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:3px;">${t.use}</div>
+          <div class="ai-tool-desc">${t.why}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="padding:16px 18px 6px;">
+      <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--white);">Your 3 Portfolio Projects</div>
+    </div>
+    <div style="padding:0 18px 14px;">
+    ${[
+      { num: '#1', title: 'AI-Powered Territory Analysis', week: 'Week 6', desc: 'Take a public dataset. Use Claude to build a territory segmentation framework, identify top accounts, and model revenue distribution. Documents your process end-to-end.' },
+      { num: '#2', title: 'Company AI Opportunity Audit', week: 'Week 6', desc: 'Pick a company you\'d want to work for. Write a 2-page audit: where are they underusing AI? What would you implement? What would it save? This is a consulting pitch in disguise.' },
+      { num: '#3', title: 'Custom Revenue Strategy GPT', week: 'Week 7', desc: 'Build a Claude Project that acts as a "Revenue Strategy Advisor." Upload frameworks, write a system prompt, test it. Completely demoable in interviews and to clients.' },
+    ].map(p => `
+      <div style="padding:12px 0;border-bottom:1px solid var(--border);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <span style="font-size:13px;font-weight:600;color:var(--white);">${p.num} ${p.title}</span>
+          <span style="font-size:10px;color:var(--teal);background:rgba(46,196,169,0.15);padding:3px 8px;border-radius:100px;">${p.week}</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;">${p.desc}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="padding:16px 18px 6px;">
+      <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--white);">How to Position Your AI Skills</div>
+    </div>
+    <div style="padding:0 18px 14px;">
+    ${[
+      ['In your resume', 'Create a "Tools & Technologies" section. Don\'t just list tools — add context: "Applied AI tools to reduce revenue reporting cycle from 3 days to 4 hours."'],
+      ['In interviews', 'Lead with a specific example: "I built X using Y tool. It helped Z stakeholder make better decisions about W." Offer to demo. This wins.'],
+      ['In networking', 'Share your AI one-pager. It\'s a conversation starter that immediately positions you differently from every other RevOps professional in the room.'],
+      ['For consulting', 'Position as an "AI-native revenue operator." Your pitch: you bring both the domain expertise AND the AI toolkit to deploy it. Most consultants have one or the other.'],
+    ].map(([label, text]) => `
+      <div style="padding:10px 0;border-bottom:1px solid var(--border);">
+        <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">${label}</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;">${text}</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ── QUIT ──────────────────────────────────────────────────
+function renderQuit() {
+  return `
+  <div class="personal-banner">
+    <h3>Your Exit Strategy</h3>
+    <p>You're not leaving impulsively — you're leaving intentionally. This section is your blueprint for doing it in a way that protects your reputation, your relationships, and your peace of mind.</p>
+  </div>
+
+  ${quitSections.map((s, si) => `
+  <div class="card quit-section">
+    <div class="card-header" onclick="toggleQuit(${si})">
+      <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--white);">${s.title}</div>
+      <div class="chevron ${openQuit===si?'open':''}">›</div>
+    </div>
+    ${openQuit===si ? `
+    <div class="card-body">
+      ${s.items.map(item => `
+      <div class="quit-rule">
+        <span class="quit-bullet">◆</span>
+        <span class="quit-text">${item}</span>
+      </div>`).join('')}
+      ${s.note ? `<div class="note-box">${s.note}</div>` : ''}
+    </div>` : ''}
+  </div>`).join('')}
+
+  <div class="card">
+    <div class="card-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+      <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--white);">Resignation Letter Template</div>
+      <div class="chevron">›</div>
+    </div>
+    <div style="display:none;padding:0 18px 18px;">
+      <div style="background:var(--surface);border-radius:10px;padding:16px;font-size:13px;color:var(--text);line-height:2;">
+        <p>Hi [Manager's Name],</p><br>
+        <p>I want to let you know that I've made the decision to move on from [Company]. My last day will be [Date].</p><br>
+        <p>Working here has genuinely shaped how I think about [skill/area], and I'm grateful for the opportunities, the trust, and the team.</p><br>
+        <p>I'm committed to a smooth transition. I'll have a full handoff document ready by [date] and am happy to help train whoever takes over my responsibilities.</p><br>
+        <p>Thank you for everything.</p><br>
+        <p>[Your name]</p>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:10px;font-style:italic;">Keep it short. Don't over-explain. Never put your real reasons in writing.</div>
+    </div>
+  </div>`;
+}
+
+// ── SCHEDULE ──────────────────────────────────────────────
+function renderSchedule() {
+  return `
+  <div class="personal-banner">
+    <h3>Your Daily Rhythm</h3>
+    <p>Three distinct schedules — one for each phase. The structure protects you from both laziness and overwork. Adapt it to your life, but protect the deep work blocks and the morning ritual.</p>
+  </div>
+
+  ${schedules.map((s, si) => `
+  <div class="card">
+    <div class="card-header" onclick="toggleSchedule(${si})">
+      <div>
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${s.color};margin-bottom:4px;">${s.label.split('·')[0].trim()}</div>
+        <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--white);">${s.label.split('·').slice(1).join('·').trim()}</div>
+      </div>
+      <div class="chevron ${openSchedule===si?'open':''}">›</div>
+    </div>
+    ${openSchedule===si ? `
+    <div class="card-body">
+      ${s.slots.map(slot => `
+      <div class="sched-row">
+        <div class="sched-time" style="color:${s.color}">${slot.time}</div>
+        <div class="sched-act">${slot.act}</div>
+      </div>`).join('')}
+    </div>` : ''}
+  </div>`).join('')}
+
+  <div class="card">
+    <div style="padding:16px 18px 4px;">
+      <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--white);">Non-Negotiables</div>
+    </div>
+    <div style="padding:0 18px 14px;">
+    ${[
+      ['Protect your mornings', 'First 2 hours = movement and no screens. Every day. This one rule changes everything.'],
+      ['Exercise is non-optional', 'Physical activity is the best cognitive recovery tool available. Treat it as a work meeting.'],
+      ['Deep work before shallow work', 'Do your hardest creative work in the morning block. Admin and outreach come after.'],
+      ['One full day off per week', 'Take Sunday completely off. No laptop. No job search. Rest is productive.'],
+      ['Evenings are for recovery', 'Wind down by 9pm. Sleep is the foundation everything else rests on.'],
+    ].map(([t,d]) => `
+      <div style="padding:10px 0;border-bottom:1px solid var(--border);">
+        <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px;">${t}</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.5;">${d}</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ── SCORECARD ─────────────────────────────────────────────
+function renderScorecard() {
+  const total = scorecard.reduce((a, c) => a + c.items.length, 0);
+  const done = Object.values(checks).filter(Boolean).length;
+  const pct = Math.round((done / total) * 100);
+  const grade = pct >= 90 ? { label: 'Excellent', note: 'You\'re locked in.', color: 'var(--teal)' }
+    : pct >= 70 ? { label: 'On Track', note: 'Note what you missed and why.', color: 'var(--gold)' }
+    : pct >= 50 ? { label: 'Course Correct', note: 'Something\'s off. Audit your energy.', color: 'var(--rose)' }
+    : { label: 'Reset Week', note: 'Remove 2 tasks next week. Simpler beats nothing.', color: 'var(--muted)' };
+
+  return `
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px;text-align:center;">
+    <div style="font-family:'Playfair Display',serif;font-size:48px;font-weight:900;color:${grade.color};line-height:1;">${pct}%</div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--white);margin:4px 0;">${grade.label}</div>
+    <div style="font-size:12px;color:var(--muted);">${done} of ${total} items · ${grade.note}</div>
+    <button onclick="clearChecks()" style="margin-top:12px;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:11px;padding:6px 14px;border-radius:100px;cursor:pointer;">Reset for new week</button>
+  </div>
+
+  ${scorecard.map((cat, ci) => `
+  <div class="card">
+    <div style="padding:14px 18px 8px;border-left:3px solid ${cat.color};">
+      <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--white);">${cat.cat}</div>
+    </div>
+    <div style="padding:0 18px 10px;">
+    ${cat.items.map((item, ii) => {
+      const key = `c${ci}i${ii}`;
+      const isChecked = checks[key];
+      return `
+      <div class="check-item" onclick="toggleCheck('${key}')">
+        <div class="check-box ${isChecked?'checked':''}">${isChecked ? `<span style="color:${cat.color};font-size:12px;">✓</span>` : ''}</div>
+        <span class="check-label ${isChecked?'checked':''}">${item}</span>
+      </div>`;
+    }).join('')}
+    </div>
+  </div>`).join('')}
+
+  <div class="card">
+    <div style="padding:14px 18px 4px;">
+      <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--white);">Sunday Review Prompts</div>
+    </div>
+    <div style="padding:0 18px 14px;">
+    ${[
+      'What was my biggest win this week?',
+      'What did I avoid that I need to do next week?',
+      'What drained my energy? What gave me energy?',
+      'Am I on track with my 90-day arc? What needs to shift?',
+      'Who do I need to follow up with this week?',
+    ].map(q => `
+    <div class="reflection-item" style="padding:8px 0;border-bottom:1px solid var(--border);">
+      <span class="reflection-diamond">✦</span>
+      <span class="reflection-text">${q}</span>
+    </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ── EVENTS ────────────────────────────────────────────────
+function attachEvents() {}
+
+function toggleWeek(n) { openWeek = openWeek === n ? null : n; openTask = null; render(); }
+function toggleTask(key) { openTask = openTask === key ? null : key; render(); }
+function toggleQuit(n) { openQuit = openQuit === n ? null : n; render(); }
+function toggleSchedule(n) { openSchedule = openSchedule === n ? null : n; render(); }
+function toggleCheck(key) { checks[key] = !checks[key]; saveChecks(); render(); }
+function clearChecks() { checks = {}; saveChecks(); render(); }
+
+function showTab(id, btn) {
+  currentTab = id;
+  openWeek = null; openTask = null; openQuit = null; openSchedule = null;
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  else {
+    const map = { overview: 0, weeks: 1, ai: 2, quit: 3, schedule: 4, scorecard: 5 };
+    document.querySelectorAll('.nav-tab')[map[id]]?.classList.add('active');
+  }
+  render();
+}
+
+// ── INIT ──────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
